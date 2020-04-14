@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <div>
+    <p>map: <br><span id="map"></span></p>
+    <p>current position: <span id="myPosition"></span></p>
+    <p>current room: <span id="currentRoom"></span></p>
+    <p>exits: <span id="exits"></span></p>
+  </div>
+
+  <script src="player.js"></script>
+  <script src="room.js"></script>
+  <script src="room-db.js"></script>
+  <script src="map.js"></script>
+  <script src="renderer.js"></script>
+  <script src="game.js"></script>
+<script>
+  /* CONFIG
+  -------------------- */
+  var game = new Game({
+    player, map, rooms
+  })
+
+  var renderer = new Renderer(game)
+
+  /* START HERE
+  -------------------- */
+  window.onload = function(){
+    game.update()
+    render();
+  }
+
+  function render(){
+    el('myPosition').innerHTML = player.position
+    el('currentRoom').innerHTML = JSON.stringify(game.currentRoom)
+
+    // render exits
+    el('exits').innerHTML = ''
+    for (var k in game.currentExits) {
+      const element = game.currentExits[k];
+      if(element){
+        el('exits').innerHTML += `<a href="#" data-target="${element}" onclick="move(${element})">${k}</a> `
+      }
+    }
+
+    // render map
+    renderer.renderMap(el('map'))
+  }
+
+  /* FUNCTIONS
+  -------------------- */
+  function move(target){
+    player.move(target)
+    game.update()
+    render()
+  }
+
+  function el(id){
+    return document.getElementById(id)
+  }
+</script>
+</body>
+</html>
